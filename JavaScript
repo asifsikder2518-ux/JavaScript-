@@ -1,51 +1,20 @@
 const express = require("express");
-const cors = require("cors");
-
 const app = express();
-app.use(cors());
+
 app.use(express.json());
 
-let users = {};
+let users = [];
 
-// Register
+app.get("/", (req, res) => {
+  res.send("Backend running ✅");
+});
+
 app.post("/register", (req, res) => {
-  const { userId, name } = req.body;
-
-  if (!users[userId]) {
-    users[userId] = {
-      name,
-      balance: 0
-    };
-  }
-
-  res.json(users[userId]);
-});
-
-// Get user
-app.get("/user/:id", (req, res) => {
-  res.json(users[req.params.id]);
-});
-
-// Deposit
-app.post("/deposit", (req, res) => {
-  const { userId, amount } = req.body;
-
-  users[userId].balance += amount;
-
+  const user = req.body;
+  users.push(user);
   res.json({ success: true });
 });
 
-// Withdraw
-app.post("/withdraw", (req, res) => {
-  const { userId, amount } = req.body;
-
-  if (users[userId].balance < amount) {
-    return res.json({ error: "Low balance" });
-  }
-
-  users[userId].balance -= amount;
-
-  res.json({ success: true });
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
-
-app.listen(3000, () => console.log("Server running"));
